@@ -4,32 +4,32 @@ const url = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCtr3FT0uDFpjx-Vis
 
 function initialize() {
     // Latitude and Longitude coordinates for the map center
-    var $latitude = 51.51891,
-        $longitude = -0.11905;
+    let latitude = 51.51891,
+        longitude = -0.11905;
   
     // URL of the marker icon image
-    var $image = '<i class="fa-solid fa-location-dot"></i>';
+    let image1 = '<i class="fa-solid fa-location-dot"></i>';
   
     // Initial zoom level for the map
-    var $mapZoom = 14;
+    let $mapZoom = 14;
   
     // Create a LatLng object with the specified coordinates
-    var myLatlng = new google.maps.LatLng($latitude, $longitude);
+    const myLatlng = new google.maps.LatLng(latitude, longitude);
   
     // Define map options, including zoom level and center
-    var mapOptions = {
+    const mapOptions = {
       zoom: $mapZoom,
       center: myLatlng
     };
   
     // Create a new Google Map instance, specifying the target HTML element and map options
-    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    const map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
   
     // Store the marker icon URL in a variable
-    var image = $image;
+    let image = image1;
   
     // Create a marker on the map with specified properties
-    var marker = new google.maps.Marker({
+    const marker = new google.maps.Marker({
       position: myLatlng,
       icon: image,
       map: map,
@@ -40,7 +40,7 @@ function initialize() {
     console.log(marker);
   
     // Editable string with HTML markup for tooltip content
-    var contentString = '<div id="content">' +
+    const contentString = '<div id="content">' +
         '<div id="siteNotice">' +
         '<h3 id="firstHeading" class="mapHeading">Mishcon de Reya</h3>' +
         '</div>' +
@@ -51,7 +51,7 @@ function initialize() {
         '</div>';
   
     // Create an InfoWindow with the specified content
-    var infowindow = new google.maps.InfoWindow({
+    const infowindow = new google.maps.InfoWindow({
       content: contentString
     });
   
