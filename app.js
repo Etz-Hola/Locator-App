@@ -1,69 +1,117 @@
+const searchBtn = document.getElementById("search-btn");
+let input = document.getElementById("inputWord");
+const APIKey = `9ZCMwttKHzJ74DQOD30pF32gC7fLLmspWroXFyayETo`;
 
-const url = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCtr3FT0uDFpjx-VisBICLWclTjETC6UTc`
-// Function to initialize the Google Map
-
-function initialize() {
-    // Latitude and Longitude coordinates for the map center
-    let latitude = 51.51891,
-        longitude = -0.11905;
-  
-    // URL of the marker icon image
-    let image1 = '<i class="fa-solid fa-location-dot"></i>';
-  
-    // Initial zoom level for the map
-    let $mapZoom = 14;
-  
-    // Create a LatLng object with the specified coordinates
-    const myLatlng = new google.maps.LatLng(latitude, longitude);
-  
-    // Define map options, including zoom level and center
-    const mapOptions = {
-      zoom: $mapZoom,
-      center: myLatlng
-    };
-  
-    // Create a new Google Map instance, specifying the target HTML element and map options
-    const map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-  
-    // Store the marker icon URL in a variable
-    let image = image1;
-  
-    // Create a marker on the map with specified properties
-    const marker = new google.maps.Marker({
-      position: myLatlng,
-      icon: image,
-      map: map,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      title: 'Mishcon De Reya'
-    });
-
-    console.log(marker);
-  
-    // Editable string with HTML markup for tooltip content
-    const contentString = '<div id="content">' +
-        '<div id="siteNotice">' +
-        '<h3 id="firstHeading" class="mapHeading">Mishcon de Reya</h3>' +
-        '</div>' +
-        '<div id="mapContent">' +
-        '<p>Summit House,<br />' +
-        '12 Red Lion Square</p>' +
-        '</div>' +
-        '</div>';
-  
-    // Create an InfoWindow with the specified content
-    const infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
-  
-    // Open the InfoWindow (tooltip) on map load, anchored to the marker
-    infowindow.open(map, marker);
-  
-    // Open the InfoWindow (tooltip) on click on the marker (currently commented out)
-    // google.maps.event.addListener(marker, 'click', function() {
-    //   infowindow.open(map, marker);
-    // });
+//To make ENTER button function with input field
+input.addEventListener("keyup", function (event) {
+  if (event.keyCode == 13) {
+    searchBtn.click();
   }
-  
-  // Add a DOM event listener to call the 'initialize' function when the window is fully loaded
-  google.maps.event.addDomListener(window, 'load', initialize);
-  
+});
+
+// To initialize first map load 
+function addMarkersToMap(map) {
+  map.setCenter({ lat: 7.4749, lng: 3.91371 });
+  map.setZoom(10);
+}
+
+//Step 1: initialize communication with the platform
+// In your own code, replace variable window.apikey with your own apikey
+let platform = new H.service.Platform({
+  apikey: APIKey,
+});
+
+let defaultLayers = platform.createDefaultLayers();
+
+//Step 2: initialize a map - this map is centered over Europe
+let map = new H.Map(
+  document.getElementById("map"),
+  defaultLayers.vector.normal.map,
+  {
+    center: { lat: 7.4749, lng: 3.91371 },
+    zoom: 7,
+    pixelRatio: window.devicePixelRatio || 1,
+  }
+);
+
+// add a resize listener to make sure that the map occupies the whole container
+window.addEventListener("resize", () => map.getViewPort().resize());
+
+//Step 3: make the map interactive
+// MapEvents enables the event system
+// Behavior implements default interactions for pan/zoom (also on mobile touch environments)
+let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+// // Create the default UI components
+let ui = H.ui.UI.createDefault(map, defaultLayers);
+// Now use the map as required...
+window.onload = function () {
+  addMarkersToMap(map);
+};
+
+
+
+//
+//
+//SEARCH BTN TRIGGER ACTION
+searchBtn.addEventListener("click", () => {
+  let map1 = document.getElementById("map");
+  let inputWord = document.getElementById("inputWord").value.trim();
+
+  fetch(
+    `https://geocode.search.hereapi.com/v1/geocode?q=${inputWord}&limit=4&apiKey=${APIKey}`
+  )
+    .then((response) => response.json())
+    .then((data) => {
+              console.log(data);
+              // console.log(data.items[0]);
+              // console.log(data.items[0].position);
+      let longitude = parseFloat(data.items[0].position.lng);
+      let latitude = parseFloat(data.items[0].position.lat);
+
+      function addMarkersToMap(map) {
+        let marker = new H.map.Marker({
+          lat: `${latitude}`,
+          lng: `${longitude}`,
+        });
+        map.addObject(marker);
+      }
+
+      /**
+       * Boilerplate map initialization code starts below:
+       */
+
+      //Step 1: initialize communication with the platform
+      // In your own code, replace variable window.apikey with your own apikey
+      let platform = new H.service.Platform({
+        apikey: APIKey,
+      });
+
+      let defaultLayers = platform.createDefaultLayers();
+      map1.innerHTML = ``;
+      //Step 2: initialize a map - this map is centered over Europe
+      let map = new H.Map(
+        document.getElementById("map"),
+        defaultLayers.vector.normal.map,
+        {
+          center: { lat: `${latitude}`, lng: `${longitude}` },
+          zoom: 9,
+          pixelRatio: window.devicePixelRatio || 1,
+        }
+      );
+
+      // add a resize listener to make sure that the map occupies the whole container
+      window.addEventListener("resize", () => map.getViewPort().resize());
+
+      //Step 3: make the map interactive
+      // MapEvents enables the event system
+      // Behavior implements default interactions for pan/zoom (also on mobile touch environments)
+      let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+      // // Create the default UI components
+      let ui = H.ui.UI.createDefault(map, defaultLayers);
+
+      // Now use the map as required...
+      addMarkersToMap(map);
+    });
+});
