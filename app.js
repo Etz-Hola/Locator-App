@@ -15,15 +15,18 @@ function addMarkersToMap(map) {
   map.setZoom(10);
 }
 
+
+  /**
+  * Boilerplate map initialization code starts below:
+  */
 //Step 1: initialize communication with the platform
-// In your own code, replace variable window.apikey with your own apikey
 let platform = new H.service.Platform({
   apikey: APIKey,
 });
 
 let defaultLayers = platform.createDefaultLayers();
 
-//Step 2: initialize a map - this map is centered over Europe
+//Step 2: initialize a map 
 let map = new H.Map(
   document.getElementById("map"),
   defaultLayers.vector.normal.map,
@@ -50,7 +53,6 @@ window.onload = function () {
 };
 
 
-
 //
 //
 //SEARCH BTN TRIGGER ACTION
@@ -63,9 +65,9 @@ searchBtn.addEventListener("click", () => {
   )
     .then((response) => response.json())
     .then((data) => {
-              console.log(data);
-              // console.log(data.items[0]);
-              // console.log(data.items[0].position);
+      // console.log(data);
+      // console.log(data.items[0]);
+      // console.log(data.items[0].position);
       let longitude = parseFloat(data.items[0].position.lng);
       let latitude = parseFloat(data.items[0].position.lat);
 
@@ -77,19 +79,14 @@ searchBtn.addEventListener("click", () => {
         map.addObject(marker);
       }
 
-      /**
-       * Boilerplate map initialization code starts below:
-       */
-
       //Step 1: initialize communication with the platform
-      // In your own code, replace variable window.apikey with your own apikey
       let platform = new H.service.Platform({
         apikey: APIKey,
       });
 
       let defaultLayers = platform.createDefaultLayers();
       map1.innerHTML = ``;
-      //Step 2: initialize a map - this map is centered over Europe
+      //Step 2: initialize a map 
       let map = new H.Map(
         document.getElementById("map"),
         defaultLayers.vector.normal.map,
